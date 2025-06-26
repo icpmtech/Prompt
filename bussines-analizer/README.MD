@@ -1,67 +1,95 @@
-Gemini Anonymization Script
+````markdown
+# Gemini Anonymization Script
 
-This project provides a Python script to anonymize text from multiple sources—plain text files, web pages, and PDF documents—using Google's Gemini 2.0 Flash API.
+A Python tool to anonymize text from multiple sources—plain text files, web pages, and PDF documents—using Google's Gemini 2.0 Flash API.
 
-Features
+## Features
 
-File Input: Read raw text from a UTF‑8 encoded text file.
+- **File Input**: Read raw text from a UTF-8 encoded text file.  
+- **Web Scraping**: Fetch and extract visible text from any public webpage.  
+- **PDF Extraction**: Extract text content from PDF files.  
+- **Anonymization**: Combine all inputs into a single prompt and send to the Gemini API for anonymization.  
+- **Output**: Write anonymized text to an output file.  
 
-Web Scraping: Fetch and extract visible text from any public webpage.
+## Requirements
 
-PDF Extraction: Extract text content from PDF files.
+- Python 3.7+  
+- Dependencies listed in `requirements.txt`.
 
-Anonymization: Combine all inputs into a single prompt and send to the Gemini API for anonymization.
+Install dependencies:
 
-Output: Write anonymized text to an output file.
-
-Requirements
-
-Dependencies are listed in requirements.txt. You can install them via:
-
+```bash
 pip install -r requirements.txt
+````
 
-Configuration
+## Configuration
 
-API Key: Obtain a Google Cloud API key with access to the Generative Language API.
+1. **API Key**
 
-Environment Variable: Set your key in the script or pass it as an environment variable:
+   * Obtain a Google Cloud API key with access to the Generative Language API.
+   * Set your key as an environment variable:
 
-export GEMINI_API_KEY="YOUR_API_KEY_HERE"
+     ```bash
+     export GEMINI_API_KEY="YOUR_API_KEY_HERE"
+     ```
 
-Files & URLs:
+2. **Environment Variables**
+   Rename the file `env.example` to `.env` in the project root and fill in your values:
 
-Prompt file: Prompt1.txt (contains anonymization examples and instructions).
+   ```ini
+   GEMINI_API_KEY=YOUR_API_KEY_HERE
+   PROMPT_FILE=Prompt1.txt
+   RAW_TEXT_FILE=input_teste.txt
+   WEBPAGE_URL=https://example.com/page-to-anonymize
+   PDF_FILE=document_to_anonymize.pdf
+   OUTPUT_FILE=output.txt
+   TEMPERATURE=0.0
+   ```
 
-Raw text file: input_teste.txt.
+## Usage
 
-Webpage URL: Set WEBPAGE_URL in the script.
+Run the anonymization script:
 
-PDF file: Set PDF_FILE in the script.
-
-Usage
-
+```bash
 python gemini_anon_with_webpdf.py
+```
 
-The script will:
+What happens:
 
-Read the prompt template and raw text.
+1. Reads the prompt template (`Prompt1.txt`) and raw text (`input_teste.txt`).
+2. Fetches and parses the webpage at `WEBPAGE_URL`.
+3. Extracts text from the PDF specified by `PDF_FILE`.
+4. Compiles all sources into a combined prompt.
+5. Sends the prompt to the Gemini API for anonymization.
+6. Saves the anonymized output to `OUTPUT_FILE`.
 
-Fetch and parse the webpage.
+## Customization
 
-Extract text from the specified PDF.
+* **Temperature**: Adjust the `TEMPERATURE` variable for creative (higher) vs. deterministic (lower) anonymization.
+* **Retries & Logging**: Extend or modify the `generate_content()` function to add retry logic or detailed logging.
+* **Additional Sources**: Follow the provided function patterns to add other input sources (e.g., database, CSV).
 
-Compile all sources into a combined prompt.
+## Development
 
-Send to Gemini and save the anonymized output in output.txt.
+1. Clone the repository:
 
-Customization
+   ```bash
+   git clone https://github.com/youruser/gemini-anonymization.git
+   cd gemini-anonymization
+   ```
+2. Create and activate a virtual environment:
 
-Adjust TEMPERATURE for creative vs. deterministic anonymization.
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # Linux/macOS
+   venv\Scripts\activate     # Windows
+   ```
+3. Install dependencies and configure `.env`.
+4. Run the script as described above.
 
-Add retry or logging logic in generate_content() as needed.
-
-Extend to other input sources by following the provided function patterns.
-
-License
+## License
 
 MIT © Pedro Martins
+
+```
+```
