@@ -1,0 +1,38 @@
+@ Page language="c#" Codebehind="FrmAskResumoGuia.aspx.cs" AutoEventWireup="false" Inherits="Real.Web.WebGDocVida.Pages.GisDoc.FrmAskResumoGuia" %>
+<%@ OutputCache Location="None" VaryByParam="None" %>
+<%@ Register TagPrefix="uc1" TagName="EditorDataHora" Src="~/Controls/Gerais/EditorDataHora.ascx" %>
+<%@ Register TagPrefix="uc2" TagName="EditorDataHora" Src="../../Controls/Gerais/EditorDataHora.ascx" %>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
+<HTML>
+<HEAD>
+<LINK href="/LibraryVida/StyleSheets/WEBSapas.css" type="text/css" rel="stylesheet">
+<SCRIPT language="javascript" src="/LibraryVida/Scripts/Espera.js"></SCRIPT>
+<script language="javascript" src="/LibraryVida/Scripts/Popups.js"></script>
+</HEAD>
+<body onload="javascript:window.focus();esconder();">
+<form id="FormIndex" method="post" runat="server" onsubmit="alterarEspera(true)">
+<asp:panel id="pnlIndex" runat="server" Height="25px">
+<TABLE class="Border" height="100%" cellSpacing="0" cellPadding="2" width="100%" border="0">
+<TR class="Titulo" height="20">
+<TD vAlign="middle" colSpan="3">Guia de Remessa</TD>
+</TR>
+<TR height="20">
+<TD align="right" width="150">&nbsp;&nbsp;Data:</TD>
+<TD class="tblSpace"></TD>
+<TD align="left">
+<UC2:EDITORDATAHORA id="EditorDataHora1" runat="server" pClass="fldDisabled"></UC2:EDITORDATAHORA></TD>
+</TR>
+<TR height="90%">
+<TD vAlign="middle" colSpan="3"></TD>
+</TR>
+<TR>
+<TD align="left">
+<asp:button id="BtnCancel" tabIndex="5" Text="Cancelar" Runat="server" CssClass="botoes"></asp:button></TD>
+<TD align="right" colSpan="2">
+<asp:button id="BtnTratar" tabIndex="4" Text="Emitir Guia" Runat="server" CssClass="botoes"></asp:button></TD>
+</TR>
+</TABLE>
+</asp:panel>
+</form>
+</body>
+</HTML>

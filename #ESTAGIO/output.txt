@@ -1,0 +1,39 @@
+### Output
+1. Resumo funcional
+Este código define um formulário web para emitir uma guia de remessa, permitindo ao usuário selecionar a data e emitir ou cancelar a operação.
+
+2. Descrição técnica
+
+    Linha 1: A diretiva `@Page` define a página como um arquivo ASP.NET, utilizando C# como linguagem backend. `Codebehind="FrmAskResumoGuia.aspx.cs"` vincula a página a um arquivo de código que contém a lógica de execução.
+
+    Linha 2: `@OutputCache` desativa o cache de saída da página, garantindo que a página seja carregada dinamicamente sempre que necessário.
+
+    Linhas 3-4: `@Register` registram controlos personalizados `EditorDataHora`, que são usados na interface para exibir e permitir a edição de campos de data e hora.
+
+    Linhas 5-10: O bloco HTML inclui as ligações ao CSS e aos scripts JavaScript necessários para a aparência e interatividade da página.
+
+        CSS é usado para formatar a página (por exemplo, o layout do formulário).
+
+        JavaScript carrega funcionalidades de animação, como a exibição de uma "espera" enquanto os dados são processados, e funcionalidades de popups.
+
+    Linhas 11-31: O formulário contém campos interativos:
+
+        `asp:panel` define um painel que contém os elementos do formulário.
+
+        `TABLE` define o layout do formulário.
+
+        `EDITORDATAHORA` permite selecionar a data para a guia de remessa.
+
+        `BtnCancel` permite cancelar a operação.
+
+        `BtnTratar` permite emitir a guia de remessa.
+
+3. Relação com seguros de saúde
+
+Este formulário provavelmente faz parte de um sistema de gestão de guias de remessa no contexto de seguros de saúde. Ele é utilizado para gerar guias de remessa, que são documentos utilizados para encaminhar pacientes para determinados serviços de saúde. Alguns pontos específicos:
+
+    A guia de remessa pode ser utilizada para encaminhar o paciente para um exame, consulta ou tratamento específico.
+
+    A data da guia de remessa é importante para controlar o período em que o paciente pode utilizar o serviço.
+
+    O sistema permite ao operador do sistema emitir guias de remessa para os pacientes.
