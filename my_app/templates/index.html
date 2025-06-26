@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Text Anonymizer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <h1>Text Anonymizer</h1>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <ul class="flashes">
+        {% for msg in messages %}<li>{{ msg }}</li>{% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+  <form method="post" enctype="multipart/form-data">
+    <label>Webpage URL:<br><input name="webpage_url" type="url"></label><br>
+    <label>Upload PDF:<br><input name="pdf_file" type="file" accept="application/pdf"></label><br>
+    <label>Or paste text:<br><textarea name="raw_text" rows="5"></textarea></label><br>
+    <button type="submit">Anonymize</button>
+  </form>
+
+  {% if output %}
+  <h2>Result</h2>
+  <pre>{{ output }}</pre>
+  {% endif %}
+</body>
+</html>
