@@ -1,29 +1,481 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Text Anonymizer</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Anonymizer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            padding: 40px 40px 60px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: inherit;
+            clip-path: ellipse(100% 100% at 50% 0%);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .flash-messages {
+            margin-bottom: 30px;
+        }
+
+        .flash-message {
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            color: #92400e;
+            display: flex;
+            align-items: center;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .flash-message::before {
+            content: '⚠️';
+            margin-right: 10px;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .input-tabs {
+            display: flex;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 20px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #64748b;
+        }
+
+        .tab-button.active {
+            background: white;
+            color: #4f46e5;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        input[type="url"], textarea {
+            width: 100%;
+            padding: 15px 18px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        input[type="url"]:focus, textarea:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        }
+
+        .file-upload {
+            position: relative;
+            display: block;
+            width: 100%;
+        }
+
+        .file-upload-input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-upload-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            border: 2px dashed #d1d5db;
+            border-radius: 12px;
+            background: #fafafa;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .file-upload-label:hover {
+            border-color: #4f46e5;
+            background: #f8faff;
+        }
+
+        .file-upload-label.dragover {
+            border-color: #4f46e5;
+            background: #eef2ff;
+            transform: scale(1.02);
+        }
+
+        .file-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #6b7280;
+        }
+
+        .file-text {
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .file-subtext {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .selected-file {
+            margin-top: 15px;
+            padding: 12px 16px;
+            background: #ecfdf5;
+            border: 1px solid #10b981;
+            border-radius: 8px;
+            color: #065f46;
+            display: none;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 18px 30px;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+        }
+
+        .submit-button:active {
+            transform: translateY(0);
+        }
+
+        .result-section {
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 2px solid #e5e7eb;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .result-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .copy-button {
+            padding: 8px 16px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .copy-button:hover {
+            background: #059669;
+        }
+
+        .result-content {
+            background: #1f2937;
+            color: #e5e7eb;
+            padding: 25px;
+            border-radius: 12px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 30px 20px 40px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .input-tabs {
+                flex-direction: column;
+            }
+            
+            .tab-button {
+                margin-bottom: 2px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <h1>Text Anonymizer</h1>
-  {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      <ul class="flashes">
-        {% for msg in messages %}<li>{{ msg }}</li>{% endfor %}
-      </ul>
-    {% endif %}
-  {% endwith %}
-  <form method="post" enctype="multipart/form-data">
-    <label>Webpage URL:<br><input name="webpage_url" type="url"></label><br>
-    <label>Upload PDF:<br><input name="pdf_file" type="file" accept="application/pdf"></label><br>
-    <label>Or paste text:<br><textarea name="raw_text" rows="5"></textarea></label><br>
-    <button type="submit">Anonymize</button>
-  </form>
+    <div class="container">
+        <div class="header">
+            <h1>🔒 Text Anonymizer</h1>
+            <div class="subtitle">Protect privacy by removing sensitive information from your content</div>
+        </div>
+        
+        <div class="content">
+            <!-- Flash messages (simulated for demo) -->
+            <div class="flash-messages" style="display: none;">
+                <div class="flash-message">
+                    This is a sample flash message
+                </div>
+            </div>
+            
+            <form method="post" enctype="multipart/form-data">
+                <div class="form-section">
+                    <div class="input-tabs">
+                        <button type="button" class="tab-button active" data-tab="url">🌐 URL</button>
+                        <button type="button" class="tab-button" data-tab="pdf">📄 PDF</button>
+                        <button type="button" class="tab-button" data-tab="text">📝 Text</button>
+                    </div>
+                    
+                    <div class="tab-content active" data-content="url">
+                        <div class="form-group">
+                            <label for="webpage_url">Enter webpage URL</label>
+                            <input type="url" id="webpage_url" name="webpage_url" placeholder="https://example.com/article">
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" data-content="pdf">
+                        <div class="form-group">
+                            <label>Upload PDF file</label>
+                            <div class="file-upload">
+                                <input type="file" name="pdf_file" accept="application/pdf" class="file-upload-input">
+                                <div class="file-upload-label">
+                                    <div>
+                                        <div class="file-icon">📄</div>
+                                        <div class="file-text">Click to upload or drag and drop</div>
+                                        <div class="file-subtext">PDF files only, max 10MB</div>
+                                    </div>
+                                </div>
+                                <div class="selected-file"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" data-content="text">
+                        <div class="form-group">
+                            <label for="raw_text">Paste your text</label>
+                            <textarea id="raw_text" name="raw_text" placeholder="Enter or paste the text you want to anonymize..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-button">🔐 Anonymize Text</button>
+            </form>
+            
+            <!-- Demo result section -->
+            <div class="result-section" style="display: none;">
+                <div class="result-header">
+                    <div class="result-title">✅ Anonymized Result</div>
+                    <button type="button" class="copy-button">📋 Copy</button>
+                </div>
+                <div class="result-content">This is where your anonymized text will appear...</div>
+            </div>
+        </div>
+    </div>
 
-  {% if output %}
-  <h2>Result</h2>
-  <pre>{{ output }}</pre>
-  {% endif %}
+    <script>
+        // Tab switching functionality
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const tabName = button.dataset.tab;
+                
+                // Update active tab button
+                document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+                button.classList.add('active');
+                
+                // Update active content
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.querySelector(`[data-content="${tabName}"]`).classList.add('active');
+            });
+        });
+
+        // File upload enhancements
+        const fileInput = document.querySelector('.file-upload-input');
+        const fileLabel = document.querySelector('.file-upload-label');
+        const selectedFile = document.querySelector('.selected-file');
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                selectedFile.textContent = `✅ Selected: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+                selectedFile.style.display = 'block';
+            }
+        });
+
+        // Drag and drop functionality
+        fileLabel.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileLabel.classList.add('dragover');
+        });
+
+        fileLabel.addEventListener('dragleave', () => {
+            fileLabel.classList.remove('dragover');
+        });
+
+        fileLabel.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileLabel.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                const file = files[0];
+                selectedFile.textContent = `✅ Selected: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+                selectedFile.style.display = 'block';
+            }
+        });
+
+        // Copy functionality (demo)
+        document.querySelector('.copy-button')?.addEventListener('click', () => {
+            const resultText = document.querySelector('.result-content').textContent;
+            navigator.clipboard.writeText(resultText).then(() => {
+                const button = document.querySelector('.copy-button');
+                const originalText = button.textContent;
+                button.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            });
+        });
+
+        // Form submission enhancement
+        document.querySelector('form').addEventListener('submit', (e) => {
+            const button = document.querySelector('.submit-button');
+            button.innerHTML = '⏳ Processing...';
+            button.disabled = true;
+            
+            // Re-enable after a delay (in real app, this would be handled by the server response)
+            setTimeout(() => {
+                button.innerHTML = '🔐 Anonymize Text';
+                button.disabled = false;
+            }, 3000);
+        });
+    </script>
 </body>
 </html>
